@@ -70,11 +70,16 @@ def signup_for_activity(activity_name: str, email: str):
     if len(activity["participants"]) >= activity["max_participants"]:
         raise HTTPException(status_code=400, detail="Activity is full")
     
+    # Basic email format validation
+    if "@" not in email or "." not in email.split("@")[-1]:
+        raise HTTPException(status_code=400, detail="Invalid email format") 
+    
     # Validate student is not already signed up for another activity at the same time
     for act_name, act in activities.items():
         if act_name != activity_name and email in act["participants"]:
             if act["schedule"] == activity["schedule"]:
                 raise HTTPException(status_code=400, detail="Student already signed up for another activity at the same time")  
+            
 
     # Add student
     activity["participants"].append(email)
